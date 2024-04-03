@@ -1,21 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package main;
-
 import javax.swing.SwingUtilities;
+import model.TextModel;
 import view.TextView;
+import controller.TextController;
 
-/**
- *
- * @author Admin
- */
 public class main {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(TextView::new);
+        SwingUtilities.invokeLater(() -> {
+            TextView view = new TextView();
+            TextModel model = new TextModel();
+            new TextController(view, model);
+            view.setVisible(true);
+        });
     }
-    
-    
 }

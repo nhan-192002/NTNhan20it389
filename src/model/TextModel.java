@@ -1,42 +1,37 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
-
+import controller.TextController;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.stream.Collectors;
-import java.nio.file.*;
 
 public class TextModel {
-    public String readFile(File file) throws IOException {
+    public String readFile(File file) {
         if (file.getName().endsWith(".txt")) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                return reader.lines().collect(Collectors.joining("\n"));
+            try {
+                return Files.lines(file.toPath()).collect(Collectors.joining("\n"));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        return "";
+        return null;
     }
 
-    public void saveFile(File file, String content) throws IOException {
-        try (PrintWriter writer = new PrintWriter(file)) {
-            writer.write(content);
+    public void traverseDirectory(File directory, TextController controller) {
+        try {
+            Files.walk(directory.toPath())
+                    .filter(Files::isRegularFile)
+                    .forEach(file -> controller.readFile(file.toFile()));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    public void traverseDirectory(File directory) throws IOException {
-        Files.walk(directory.toPath())
-                .filter(Files::isRegularFile)
-                .forEach(file -> {
-                    try {
-                        readFile(file.toFile());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+    public void saveFile(File file, String content) {
+        try (PrintWriter writer = new PrintWriter(file)) {
+            writer.write(content);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
-
-
